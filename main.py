@@ -76,15 +76,72 @@ class game(object):
 	def display(self):
 		return self.state.display_state()
 
+# These are some models , you can also include your own
 glider = """oo.
 			o.o
 			o.."""
 
-myGame = game(init_state(glider,3,4,20,20))
-print myGame.display()
-sleep(0.45)
-for x in range(27):
-	os.system('clear')
-	myGame.move()
-	print myGame.display()
-	sleep(0.45)
+boat = """oo.
+		  o.o
+		  .o."""
+
+blinker = """ooo"""
+
+beehive = """.oo.
+			 o..o
+			 .oo."""
+
+loaf = """.oo.
+		  o..o
+		  .o.o
+		  ..o."""
+
+diehard = """......o.
+			 oo......
+			 .o...ooo"""
+
+acorn = """.o.....
+		   ...o...
+		   oo..ooo"""
+
+pentomino = """.oo
+			   oo.
+			   .o."""
+
+spaceship = """oooo.
+			   o...o
+			   o....
+			   .o..o"""
+
+class interaction_user(object):
+
+	def take_input(self):
+		print "Enter the height and width of the game of life."
+		answer = raw_input()
+		self.maxr = int(answer.split()[0])
+		self.maxc = int(answer.split()[1])
+		print "Change the inital subset in code if you want to."
+		# Change the intial subset from here if you want to
+		self.subset = spaceship
+		print "Enter the row and col no from which the subset must start (For the subset of cells which matter)."
+		answer = raw_input()
+		self.r = int(answer.split()[0])
+		self.c = int(answer.split()[1])
+		print "Enter the no of steps for which the game of life must run."
+		self.steps = int(raw_input())
+		print "Enter the time (sec) 1 move should take (similar to 1/(frame_rate))"
+		self.time = float(raw_input())
+		self.start_game()
+
+	def start_game(self):
+		myGame = game(init_state(self.subset,self.r,self.c,self.maxr,self.maxc))
+		print myGame.display()
+		sleep(self.time)
+		for x in range(self.steps):
+			os.system('clear')
+			myGame.move()
+			print myGame.display()
+			sleep(self.time)
+
+user1 = interaction_user()
+user1.take_input()
