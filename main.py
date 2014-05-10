@@ -1,7 +1,7 @@
-#it is the state of the game at a particular
-class game(object):
+# it is the state of the game at a particular
+class game_state(object):
 
-	# A function to initialize the board at the start of the game
+	# A function to initialize the board after change of game state
 	def __init__(self,init_array,startr,startc,maxr,maxc):
 
 		active_cells = []
@@ -12,7 +12,7 @@ class game(object):
 				if unit == 'o':
 					active_cells.append((r,c))
 
-		# initializing the board
+		# initializing the board for the next state
 		board = [[False] * maxc for r in range(maxr)]
 		for cell in active_cells:
 			board[cell[0] + startr][cell[1] + startc] = True
@@ -22,7 +22,7 @@ class game(object):
 		self.maxc = maxc
 
 	# A function to display the board
-	def display(self):
+	def display_state(self):
 		output = ''
 
 		for r , single_row in enumerate(self.board):
@@ -35,8 +35,50 @@ class game(object):
 
 		return output
 
+# A class containing all the functions that help a game move ahead
+class game(object):
+
+	# Initialization of variables
+	def __init__(self,state):
+		self.state = state
+		self.maxr = state.maxr
+		self.maxc = state.maxc
+
+	# Function to make life move one step ahead
+	def move(self,count=1):
+
+		new_board = [[False] * maxc for r in range(maxr)]
+
+		for r , single_row in enumerate(self.state.board):
+			for c , unit in enumerate(single_row):
+				new_board[r][c] = self.find_val(r,c)
+
+		self.state.board = new_board
+
+	# Function to find wether the new cell at the position will be an alive or dead cell
+	def find_val(self,r,c):
+		alive_count = 0
+		for r1 in [-1,0,1]:
+			for c1 in [-1,0,1]:
+				# Since the board is infinite so we dont need any boundary condition
+				alive_count += self.state.board[(r+r1)%self.maxr][(c+c1)%self.maxc]
+		if alive_count == 3:
+			return True
+		elif self.state.board[r][c]:
+			if alive_count == 2:
+				return True
+		return False
+
+	def display(self):
+		return self.state.display_state()
+
 glider = """oo.
 			o.o
 			o.."""
 
-myGame = game(glider,2,3,10,10)
+myGame = game(game_state(glider,2,3,10,10))
+print myGame.display()
+myGame.step()
+print myGame.display()
+myGame.step()
+print myGame.display()
