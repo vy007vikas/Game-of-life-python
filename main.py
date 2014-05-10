@@ -1,7 +1,10 @@
-# it is the state of the game at a particular
-class game_state(object):
+import os
+from time import sleep
 
-	# A function to initialize the board after change of game state
+# it is the state of the game at a particular
+class init_state(object):
+
+	# A function to initialize the board for the first time
 	def __init__(self,init_array,startr,startc,maxr,maxc):
 
 		active_cells = []
@@ -47,7 +50,7 @@ class game(object):
 	# Function to make life move one step ahead
 	def move(self,count=1):
 
-		new_board = [[False] * maxc for r in range(maxr)]
+		new_board = [[False] * self.maxc for r in range(self.maxr)]
 
 		for r , single_row in enumerate(self.state.board):
 			for c , unit in enumerate(single_row):
@@ -62,11 +65,12 @@ class game(object):
 			for c1 in [-1,0,1]:
 				# Since the board is infinite so we dont need any boundary condition
 				alive_count += self.state.board[(r+r1)%self.maxr][(c+c1)%self.maxc]
+				if r1==0 and c1==0 and self.state.board[r][c]:
+					alive_count -= 1
 		if alive_count == 3:
 			return True
-		elif self.state.board[r][c]:
-			if alive_count == 2:
-				return True
+		if self.state.board[r][c] and alive_count == 2:
+			return True
 		return False
 
 	def display(self):
@@ -76,9 +80,11 @@ glider = """oo.
 			o.o
 			o.."""
 
-myGame = game(game_state(glider,2,3,10,10))
+myGame = game(init_state(glider,3,4,20,20))
 print myGame.display()
-myGame.step()
-print myGame.display()
-myGame.step()
-print myGame.display()
+sleep(0.45)
+for x in range(27):
+	os.system('clear')
+	myGame.move()
+	print myGame.display()
+	sleep(0.45)
